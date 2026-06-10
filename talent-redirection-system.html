@@ -131,21 +131,37 @@ tailwind.config = {
 <!-- ====== ═══════════════════════════════════ ====== -->
 <div id="view-hr-dashboard" class="max-w-6xl mx-auto px-6 py-8">
 
+  <!-- B端演示提示横幅 -->
+  <div class="mb-6 px-4 py-3 bg-gradient-to-r from-slate-800 to-slate-700 rounded-xl flex items-center justify-between text-white">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-sm">🖥️</div>
+      <div>
+        <div class="text-sm font-semibold">当前视角：HR 招聘后台（B端产品演示）</div>
+        <div class="text-xs text-slate-300">模拟 ZA Bank HR 在 ATS 系统中处理候选人终面结果的真实操作流程</div>
+      </div>
+    </div>
+    <span class="text-xs text-slate-400 bg-white/10 px-3 py-1 rounded-full">DEMO</span>
+  </div>
+
   <!-- 顶部导航条 -->
   <div class="flex items-center justify-between mb-8">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">TR</div>
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 bg-gradient-to-br from-brand-600 to-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-xs">ZA</div>
+        <div class="h-9 w-px bg-slate-200"></div>
+        <div class="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">TR</div>
+      </div>
       <div>
-        <h1 class="text-xl font-semibold text-slate-900">ATS 招聘管理系统</h1>
-        <p class="text-xs text-slate-500">技术研发中心 · 前端开发岗 · 候选人评估</p>
+        <h1 class="text-xl font-semibold text-slate-900">ZA Bank · HR 招聘后台</h1>
+        <p class="text-xs text-slate-500">技术研发中心 · 前端开发岗 · 候选人终面评估</p>
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full border border-emerald-200">
-        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse-soft"></span>
-        AI 路由引擎 v2.4 · 运行中
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 text-brand-700 text-xs font-medium rounded-full border border-brand-200">
+        <span class="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse-soft"></span>
+        Talent Redirection Router v2.4
       </span>
-      <div class="w-8 h-8 bg-slate-300 rounded-full"></div>
+      <div class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-500 rounded-full flex items-center justify-center text-white text-xs font-bold">HR</div>
     </div>
   </div>
 
@@ -177,12 +193,12 @@ tailwind.config = {
     <div class="grid grid-cols-12 gap-4 px-6 py-4 items-center bg-amber-50/30 border-b border-amber-100">
       <div class="col-span-1 text-sm text-slate-400">02</div>
       <div class="col-span-2">
-        <div class="font-semibold text-slate-900">陈逸凡</div>
-        <div class="text-xs text-slate-500">4年经验 · 本科</div>
+        <div class="font-semibold text-slate-900">张同学</div>
+        <div class="text-xs text-slate-500">4年经验 · 本科 · 计算机+金融辅修</div>
       </div>
       <div class="col-span-3 text-sm text-slate-700">前端开发 <span class="text-xs text-slate-400 ml-1">(技术研发中心)</span></div>
       <div class="col-span-2">
-        <span class="px-2.5 py-0.5 bg-red-50 text-red-600 text-xs rounded-full font-medium">第3轮技术面</span>
+        <span class="px-2.5 py-0.5 bg-red-50 text-red-600 text-xs rounded-full font-medium">面试结束</span>
       </div>
       <div class="col-span-2">
         <div class="flex items-center gap-2">
@@ -365,7 +381,7 @@ tailwind.config = {
           onclick="routeCandidate()"
           class="btn-glow px-6 py-2.5 text-sm font-semibold text-white rounded-xl transition-all"
         >
-          一键流转新岗位并开启复活赛 →
+          确认流转并发送复活赛邀请 →
         </button>
       </div>
     </div>
@@ -373,9 +389,29 @@ tailwind.config = {
 </div>
 
 <!-- ====== ═══════════════════════════════════ ====== -->
-<!-- ======  视图 2: C端 逆风翻盘复活页                  ====== -->
+<!-- ======  视图 2: C端 逆风翻盘复活页（候选人视角）   ====== -->
 <!-- ====== ═══════════════════════════════════ ====== -->
-<div id="view-revival-page" class="hidden min-h-screen" style="background: linear-gradient(135deg, #0f1729 0%, #1e293b 40%, #172554 100%);">
+<div id="view-revival-page" class="hidden" style="background: linear-gradient(135deg, #0f1729 0%, #1e293b 40%, #172554 100%);">
+
+  <!-- B端返回条 -->
+  <div id="revival-banner-hr" class="sticky top-0 z-50 bg-slate-800/95 backdrop-blur border-b border-white/10 px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 bg-brand-600/30 rounded-lg flex items-center justify-center text-xs text-brand-300 font-bold border border-brand-500/30">HR</div>
+      <div>
+        <div class="text-xs text-slate-300 font-medium">← 以下为候选人收到的复活邀请页面预览</div>
+        <div class="text-[10px] text-slate-500">系统已自动发送加密链接至候选人的邮箱与短信，72小时内有效</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 text-[10px] text-emerald-400">
+        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse-soft"></span>
+        已发送
+      </div>
+      <button onclick="backToHRDashboard()" class="px-4 py-1.5 text-xs font-medium text-white bg-slate-700 border border-slate-600 rounded-lg hover:bg-slate-600 transition-all">
+        ← 返回 HR 后台
+      </button>
+    </div>
+  </div>
 
   <!-- 顶部导航 -->
   <nav class="border-b border-white/10 px-8 py-4 flex items-center justify-between">
@@ -476,7 +512,7 @@ tailwind.config = {
       </div>
     </div>
 
-    <!-- 底部 CTA -->
+    <!-- 底部 CTA（候选人看到的） -->
     <div class="text-center pb-12 animate-fade-in-up" style="animation-delay: 1.2s;">
       <p class="text-slate-400 text-sm mb-5">AI 路由引擎已为你找到更合适的赛道，现在就开启逆风翻盘之旅</p>
       <button
@@ -488,6 +524,12 @@ tailwind.config = {
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
       </button>
       <p class="text-xs text-slate-500 mt-3">点击即表示同意将简历流转至新部门，原淘汰记录将被覆盖</p>
+      <div class="mt-8 pt-6 border-t border-white/10">
+        <p class="text-[10px] text-slate-600 mb-2">👆 以上为候选人视角 · 下方返回 HR 操作台</p>
+        <button onclick="backToHRDashboard()" class="px-5 py-2 text-xs font-medium text-slate-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all">
+          ← 返回 HR 后台
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -501,7 +543,7 @@ const candidateProfile = {
   id: "CAND-2026-0042",
   status: "ELIMINATED",
   basic: {
-    name: "陈逸凡",
+    name: "张同学",
     originRole: "前端开发",
     originDept: "技术研发中心-平台前端组",
     eliminatedBy: "INTERVIEW_ROUND_3",
@@ -859,7 +901,7 @@ function generateRecommendationBrief(best) {
 
 /** 确认直接淘汰 */
 function confirmEliminate() {
-  if (confirm('确认直接淘汰候选人 陈逸凡 吗？\n\n⚠️ 该候选人 AI 综合评分为 A (Top 15%)，直接淘汰将不可逆且损失约 ¥2,500 获客成本。\n\n建议点击"一键流转新岗位并开启复活赛"进行智能重定向。')) {
+  if (confirm('确认直接淘汰候选人 张同学 吗？\n\n⚠️ 该候选人 AI 综合评分为 A (Top 15%)，直接淘汰将不可逆且损失约 ¥2,500 获客成本。\n\n建议点击"确认流转并发送复活赛邀请"进行智能重定向。')) {
     closeModal();
     document.getElementById('btn-eliminate-trigger').textContent = '已淘汰';
     document.getElementById('btn-eliminate-trigger').disabled = true;
@@ -867,7 +909,7 @@ function confirmEliminate() {
   }
 }
 
-/** 一键流转 → 切换到复活页 */
+/** 一键流转 → 切换到复活页（候选人视角预览） */
 function routeCandidate() {
   if (!routeResult) return;
 
@@ -882,13 +924,22 @@ function routeCandidate() {
 
   // 更新后台按钮状态
   const btn = document.getElementById('btn-eliminate-trigger');
-  btn.textContent = '已流转 → ' + best.job.department.split('-')[0];
+  btn.textContent = '已流转 → ' + best.job.title;
   btn.className = 'px-4 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-300 rounded-lg cursor-default';
 
-  // 短暂延迟后切换到 C 端复活页
+  // 短暂延迟后切换到 C 端复活页（HR视角看候选人将看到什么）
   setTimeout(() => {
     switchToRevivalPage(routeResult);
-  }, 400);
+  }, 600);
+}
+
+/** 从复活页返回 HR 后台 */
+function backToHRDashboard() {
+  const revival = document.getElementById('view-revival-page');
+  revival.classList.add('hidden');
+  document.getElementById('view-hr-dashboard').classList.remove('hidden');
+  document.body.style.overflow = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /** 切换到 C 端复活页 */
@@ -1132,7 +1183,7 @@ function renderBarChart(result) {
   window.addEventListener('resize', () => chart.resize());
 }
 
-/** 接受复活邀请 */
+/** 接受复活邀请（候选人侧模拟操作） */
 function acceptRevival() {
   if (!routeResult) return;
   const btn = document.getElementById('btn-accept-revival');
@@ -1140,19 +1191,19 @@ function acceptRevival() {
   btn.className = 'px-10 py-3.5 text-base font-bold text-emerald-600 bg-emerald-500/20 border border-emerald-500/30 rounded-xl inline-flex items-center gap-2 cursor-default';
   btn.disabled = true;
 
-  // 模拟发送通知
+  // 模拟通知 HR：候选人已接受
   setTimeout(() => {
     const toast = document.createElement('div');
-    toast.className = 'fixed top-6 right-6 z-[60] bg-white/95 backdrop-blur border border-emerald-200 rounded-xl px-5 py-3 shadow-2xl animate-slide-up text-sm';
+    toast.className = 'fixed top-20 right-6 z-[60] bg-slate-800/95 backdrop-blur border border-emerald-500/30 rounded-xl px-5 py-3 shadow-2xl animate-slide-up text-sm';
     toast.innerHTML = `
       <div class="flex items-center gap-2">
-        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="font-semibold text-slate-800">复活邀请已确认！</span>
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="font-semibold text-white">✅ 候选人已接受复活邀请</span>
       </div>
-      <p class="text-xs text-slate-500 mt-1">简历已流转至 ${routeResult.best.job.department}，HR 将在 2 个工作日内联系你。</p>
+      <p class="text-xs text-slate-400 mt-1">张同学已确认流转至 <span class="text-emerald-300">${routeResult.best.job.department}</span>，HR 请安排下一轮面试。</p>
     `;
     document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 4000);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 5000);
   }, 600);
 }
 
@@ -1160,7 +1211,7 @@ function acceptRevival() {
 console.log("[TRR] ✓ Talent Redirection Router 已就绪");
 console.log("[TRR] 候选人:", candidateProfile.basic.name, `(${candidateProfile.basic.originRole})`);
 console.log("[TRR] 在招岗位池:", activeJobPool.length, "个岗位");
-console.log("[TRR] 点击候选人 陈逸凡 的「淘汰/不通过」按钮开始演示");
+console.log("[TRR] 👉 点击候选人 张同学 的「淘汰/不通过」按钮 → AI 拦截弹窗 → 流转 → 候选人复活页预览");
 </script>
 </body>
 </html>
