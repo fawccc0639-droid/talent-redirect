@@ -49,6 +49,19 @@ tailwind.config = {
   .sidebar-item { transition: all 0.2s ease; }
   .sidebar-item:hover { background: rgba(255,255,255,0.06); }
   .sidebar-item.active { background: rgba(59,130,246,0.15); border-left: 3px solid #3b82f6; color: #e2e8f0; }
+  /* loading spinner */
+  .loading-dots::after { content: ''; animation: dots 1.2s steps(4,end) infinite; }
+  @keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} 100%{content:''} }
+  /* 右栏预览区隔离滚动 */
+  #preview-area { overflow-y: auto; overflow-x: hidden; }
+  /* hacker-style scanline overlay */
+  #preview-area::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.015) 2px, rgba(0,255,0,0.015) 4px);
+    pointer-events: none; z-index: 10;
+  }
+  #preview-content { word-break: break-word; }
+  .echarts-container { min-height: 160px; }
 </style>
 </head>
 <body class="bg-slate-100 min-h-screen font-sans antialiased text-slate-800">
@@ -300,7 +313,7 @@ tailwind.config = {
         </div>
 
         <!-- 右栏：C端预览区 | w-[420px] -->
-        <div class="w-[420px] flex-shrink-0 bg-slate-800 border-l border-slate-700 flex flex-col">
+        <div class="w-[420px] min-w-0 flex-shrink-0 bg-slate-800 border-l border-slate-700 flex flex-col min-h-0">
           <!-- 预览区标题 -->
           <div class="flex-shrink-0 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -311,7 +324,7 @@ tailwind.config = {
           </div>
 
           <!-- 预览区内容（可滚动） -->
-          <div id="preview-area" class="flex-1 overflow-y-auto">
+          <div id="preview-area" class="flex-1 overflow-y-auto relative">
 
             <!-- 初始状态 -->
             <div id="preview-empty" class="flex flex-col items-center justify-center h-full text-center px-6">
@@ -720,55 +733,109 @@ function renderMismatchBars(result) {
   </div>`;
 }
 
-// 生成预览
+// 生成预览（含 loading 状态 + 滚动隔离 + ECharts 安全销毁）
 function generatePreview() {
+  const btn = document.getElementById('btn-generate-preview');
+  if (!btn || btn.disabled) return;
+
+  // ── 1. Loading 状态 ──
+  btn.disabled = true;
+  btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>AI 正在生成...</span>';
+  btn.className = 'px-5 py-2 text-xs font-semibold text-white bg-brand-400 rounded-lg cursor-wait';
+
+  // 显示 loading 占位
+  const emptyEl = document.getElementById('preview-empty');
+  emptyEl.classList.remove('hidden');
+  emptyEl.innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full text-center px-6">
+      <div class="relative mb-5">
+        <div class="w-14 h-14 bg-brand-500/20 rounded-2xl flex items-center justify-center">
+          <svg class="animate-spin w-7 h-7 text-brand-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+        </div>
+        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2">
+          <span class="inline-block w-2 h-2 bg-brand-400 rounded-full animate-ping"></span>
+        </div>
+      </div>
+      <div class="text-sm text-slate-300 font-medium">AI 正在生成复活赛邀请<span class="loading-dots"></span></div>
+      <div class="text-[10px] text-slate-500 mt-2 leading-relaxed">分析候选人能力图谱<br/>匹配最佳路由岗位<br/>生成个性化推荐语</div>
+    </div>`;
+  document.getElementById('preview-content').classList.add('hidden');
+
+  // ── 2. 销毁旧的 ECharts 实例（避免宽高冲突） ──
+  ['chart-radar','chart-bar'].forEach(id => {
+    const dom = document.getElementById(id);
+    if (dom) { const instance = echarts.getInstanceByDom(dom); if (instance) instance.dispose(); dom.innerHTML = ''; }
+  });
+
   if (!routeResult) routeResult = calculateRoute(candidateProfile, activeJobPool);
-  const { candidate, best } = routeResult, job = best.job;
 
-  document.getElementById('preview-empty').classList.add('hidden');
-  const content = document.getElementById('preview-content');
-  content.classList.remove('hidden');
-  content.classList.add('animate-fade-in');
+  // ── 3. 1秒后渲染内容 ──
+  setTimeout(() => {
+    const { candidate, best } = routeResult, job = best.job;
 
-  // 副标题打字机
-  const sub = document.getElementById('preview-subtitle');
-  sub.innerHTML = '';
-  typewriterEffect(sub, `Hi ${candidate.basic.name}，关于你在【${candidate.basic.originDept}】的${candidate.basic.originRole}面试，AI 有不一样的发现...`, 35);
+    // 隐藏loading，显示内容
+    document.getElementById('preview-empty').classList.add('hidden');
+    const content = document.getElementById('preview-content');
+    content.classList.remove('hidden');
+    content.classList.add('animate-fade-in');
 
-  // 错位解析
-  const origin = routeResult.results.find(r => r.job.id === "JOB-2026-0101");
-  const misEl = document.getElementById('preview-mismatch');
-  misEl.innerHTML = (origin ? origin.mustHaveDetails.filter(d => !d.met).map(d => `<div>• ${d.skill}：候选人 ${d.candidateScore} 分 < 要求 ≥ ${d.threshold} 分 (缺口 ${d.threshold-d.candidateScore})</div>`).join('') : '')
-    + `<div class="text-emerald-400 mt-1">💡 但你的 3D WebGL(95) / DDM估值(85) 等优势在此岗完全无法释放</div>`;
+    // 副标题打字机
+    const sub = document.getElementById('preview-subtitle');
+    sub.innerHTML = '';
+    typewriterEffect(sub, `Hi ${candidate.basic.name}，关于你在【${candidate.basic.originDept}】的${candidate.basic.originRole}面试，AI 有不一样的发现...`, 35);
 
-  // 新岗位
-  document.getElementById('preview-job-title').textContent = job.title;
-  document.getElementById('preview-job-dept').textContent = job.department;
-  document.getElementById('preview-score-text').textContent = best.finalScore + '%';
-  setTimeout(() => { document.getElementById('preview-score-bar').style.width = best.finalScore + '%'; }, 400);
+    // 错位解析
+    const origin = routeResult.results.find(r => r.job.id === "JOB-2026-0101");
+    const misEl = document.getElementById('preview-mismatch');
+    misEl.innerHTML = (origin ? origin.mustHaveDetails.filter(d => !d.met).map(d => `<div class="py-0.5">• ${d.skill}：候选人 <span class="text-red-400">${d.candidateScore}</span> 分 < 要求 ≥ <span class="text-slate-300">${d.threshold}</span> 分 <span class="text-red-500/70 text-[9px]">(缺口 ${d.threshold-d.candidateScore})</span></div>`).join('') : '')
+      + `<div class="text-emerald-400 mt-1.5 leading-relaxed">💡 但你的 3D WebGL(95) / DDM估值(85) 等优势在此岗完全无法释放</div>`;
 
-  // 推荐词
-  const recEl = document.getElementById('preview-recommendation');
-  recEl.innerHTML = '';
-  typewriterEffect(recEl, generateRecommendation(candidate, best), 15);
+    // 新岗位
+    document.getElementById('preview-job-title').textContent = job.title;
+    document.getElementById('preview-job-dept').textContent = job.department;
+    document.getElementById('preview-score-text').textContent = best.finalScore + '%';
+    setTimeout(() => { const bar = document.getElementById('preview-score-bar'); if (bar) bar.style.width = best.finalScore + '%'; }, 500);
 
-  // ECharts
-  setTimeout(() => { renderRadarChart(routeResult); renderBarChart(routeResult); }, 350);
+    // 推荐词
+    const recEl = document.getElementById('preview-recommendation');
+    recEl.innerHTML = '';
+    typewriterEffect(recEl, generateRecommendation(candidate, best), 15);
 
-  // 按钮
-  document.getElementById('btn-generate-preview').textContent = '✓ 已生成预览';
-  document.getElementById('btn-generate-preview').className = 'px-5 py-2 text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg';
+    // ECharts（延迟确保 DOM 已可见）
+    setTimeout(() => {
+      renderRadarChart(routeResult);
+      renderBarChart(routeResult);
+    }, 450);
+
+    // 恢复按钮
+    btn.disabled = false;
+    btn.textContent = '✓ 已生成预览';
+    btn.className = 'px-5 py-2 text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg';
+
+    // 自动滚动预览区到顶部
+    const previewArea = document.getElementById('preview-area');
+    if (previewArea) previewArea.scrollTop = 0;
+  }, 1200);
 }
 
 function resetPreview() {
+  // 先销毁旧 ECharts
+  ['chart-radar','chart-bar'].forEach(id => {
+    const dom = document.getElementById(id);
+    if (dom) { const instance = echarts.getInstanceByDom(dom); if (instance) instance.dispose(); dom.innerHTML = ''; }
+  });
   document.getElementById('preview-content').classList.add('hidden');
-  document.getElementById('preview-empty').classList.remove('hidden');
-  document.getElementById('btn-generate-preview').textContent = '生成并预览复活赛邀请 →';
-  document.getElementById('btn-generate-preview').className = 'btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg';
-  const radarDom = document.getElementById('chart-radar');
-  const barDom = document.getElementById('chart-bar');
-  if (radarDom) { const c = echarts.getInstanceByDom(radarDom); if (c) c.dispose(); radarDom.innerHTML = ''; }
-  if (barDom) { const c = echarts.getInstanceByDom(barDom); if (c) c.dispose(); barDom.innerHTML = ''; }
+  const emptyEl = document.getElementById('preview-empty');
+  emptyEl.classList.remove('hidden');
+  emptyEl.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center px-6">
+    <div class="w-16 h-16 bg-slate-700 rounded-2xl flex items-center justify-center mb-4">
+      <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    </div>
+    <div class="text-sm text-slate-400 font-medium mb-1">等待生成预览</div>
+    <div class="text-xs text-slate-600 leading-relaxed">HR 在左侧选中候选人并点击<br/>"生成并预览复活赛邀请"后<br/>此处将实时渲染候选人视角的<br/>逆风翻盘复活页面</div>
+  </div>`;
+  const btn = document.getElementById('btn-generate-preview');
+  if (btn) { btn.disabled = false; btn.textContent = '生成并预览复活赛邀请 →'; btn.className = 'btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg'; }
 }
 
 // 打字机
@@ -778,44 +845,64 @@ function typewriterEffect(el, text, speed) {
   type();
 }
 
-// ECharts 雷达图
+// ECharts 雷达图（适配窄预览区：420px 宽 → 内宽 ~380px）
 function renderRadarChart(result) {
   const dom = document.getElementById('chart-radar'); if (!dom) return;
-  const chart = echarts.init(dom);
-  const allSkills = [...result.candidate.hardSkills.map(s => s.skill), ...result.candidate.crossDomain.map(s => s.skill)].slice(0, 8);
+  // 安全销毁
+  const old = echarts.getInstanceByDom(dom); if (old) old.dispose();
+  dom.innerHTML = '';
+  const chart = echarts.init(dom, null, { width: dom.clientWidth || 380, height: 200 });
+  const allSkills = [...result.candidate.hardSkills.map(s => s.skill), ...result.candidate.crossDomain.map(s => s.skill)];
   const skillMap = buildSkillMap(result.candidate);
   const bestReq = result.best.job.requirementProfile.mustHave;
   const originReq = (result.results.find(r => r.job.id === "JOB-2026-0101") || {}).requirementProfile?.mustHave || [];
-  const display = allSkills.slice(0, 6);
+  // 窄容器取4项核心指标
+  const keySkills = ['WebGL / Three.js','React / Vue','财务估值 / DDM 模型','金融科技业务理解'];
+  const nameMap = { 'WebGL / Three.js':'WebGL/3D', 'React / Vue':'React/Vue', '财务估值 / DDM 模型':'DDM估值', '金融科技业务理解':'FinTech' };
+  const display = keySkills;
+
   chart.setOption({
     backgroundColor: 'transparent',
-    legend: { bottom: 0, textStyle: { color: '#94a3b8', fontSize: 9 }, data: ['候选人', '原岗位需求', '推荐岗位需求'] },
-    radar: { center: ['50%', '48%'], radius: '55%', axisName: { color: '#94a3b8', fontSize: 8, formatter: v => v.length > 5 ? v.slice(0,5)+'..' : v },
-      indicator: display.map(s => ({ name: s, max: 100 })), axisLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } },
-      splitArea: { areaStyle: { color: ['rgba(59,130,246,0.02)', 'rgba(59,130,246,0.04)'] } } },
-    series: [{ type: 'radar', data: [
-      { name: '候选人', value: display.map(s => skillMap[s] || 0), areaStyle: { color: 'rgba(59,130,246,0.12)' }, lineStyle: { color: '#3b82f6', width: 1.5 }, itemStyle: { color: '#3b82f6' }, symbol: 'none' },
-      { name: '原岗位需求', value: display.map(s => { const r = originReq.find(x => x.skill === s); return r ? r.minScore : 0; }), areaStyle: { color: 'rgba(239,68,68,0.06)' }, lineStyle: { color: '#ef4444', width: 1, type: 'dashed' }, itemStyle: { color: '#ef4444' }, symbol: 'none' },
-      { name: '推荐岗位需求', value: display.map(s => { const r = bestReq.find(x => x.skill === s); return r ? r.minScore : 0; }), areaStyle: { color: 'rgba(16,185,129,0.12)' }, lineStyle: { color: '#10b981', width: 1.5 }, itemStyle: { color: '#10b981' }, symbol: 'none' },
+    legend: { bottom: 2, textStyle: { color: '#94a3b8', fontSize: 8 }, itemWidth: 10, itemHeight: 6, data: ['候选人', '原岗', '新岗'] },
+    radar: {
+      center: ['50%', '46%'], radius: '58%',
+      axisName: { color: '#94a3b8', fontSize: 8, formatter: v => nameMap[v] || v },
+      indicator: display.map(s => ({ name: s, max: 100 })),
+      axisLine: { lineStyle: { color: 'rgba(148,163,184,0.12)' } },
+      splitArea: { areaStyle: { color: ['rgba(59,130,246,0.015)', 'rgba(59,130,246,0.03)'] } },
+      splitNumber: 4,
+    },
+    series: [{ type: 'radar', symbol: 'none', data: [
+      { name: '候选人', value: display.map(s => skillMap[s] || 0), areaStyle: { color: 'rgba(59,130,246,0.10)' }, lineStyle: { color: '#3b82f6', width: 1.5 }, itemStyle: { color: '#3b82f6' } },
+      { name: '原岗', value: display.map(s => { const r = originReq.find(x => x.skill === s); return r ? r.minScore : 0; }), areaStyle: { color: 'rgba(239,68,68,0.05)' }, lineStyle: { color: '#ef4444', width: 1, type: 'dashed' }, itemStyle: { color: '#ef4444' } },
+      { name: '新岗', value: display.map(s => { const r = bestReq.find(x => x.skill === s); return r ? r.minScore : 0; }), areaStyle: { color: 'rgba(16,185,129,0.10)' }, lineStyle: { color: '#10b981', width: 1.5 }, itemStyle: { color: '#10b981' } },
     ] }]
   });
-  window.addEventListener('resize', () => chart.resize());
+  // resize 时重新适配
+  const onResize = () => { try { chart.resize({ width: dom.clientWidth || 380, height: 200 }); } catch(e){} };
+  window.addEventListener('resize', onResize);
+  chart._onResize = onResize;
 }
 
-// ECharts 柱状图
+// ECharts 柱状图（窄容器适配）
 function renderBarChart(result) {
   const dom = document.getElementById('chart-bar'); if (!dom) return;
-  const chart = echarts.init(dom);
-  const jobs = result.results.map(r => r.job.title.length > 8 ? r.job.title.slice(0,8)+'...' : r.job.title);
+  const old = echarts.getInstanceByDom(dom); if (old) old.dispose();
+  dom.innerHTML = '';
+  const chart = echarts.init(dom, null, { width: dom.clientWidth || 380, height: 160 });
+  const jobs = result.results.map(r => r.job.title.length > 8 ? r.job.title.slice(0,8)+'…' : r.job.title);
   const scores = result.results.map(r => r.finalScore);
   chart.setOption({
-    backgroundColor: 'transparent', tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.95)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 10 }, formatter: p => `${p[0].name}<br/><b style="font-size:14px">${p[0].value}%</b>` },
-    grid: { left: '3%', right: '6%', top: '8%', bottom: '15%', containLabel: true },
-    xAxis: { type: 'category', data: jobs, axisLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } }, axisLabel: { color: '#94a3b8', fontSize: 9 } },
-    yAxis: { type: 'value', max: 100, axisLine: { show: false }, axisTick: { show: false }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.08)' } }, axisLabel: { color: '#64748b', fontSize: 9, formatter: '{value}%' } },
-    series: [{ type: 'bar', data: scores.map((v, i) => ({ value: v, itemStyle: { color: i === 0 ? new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#10b981'},{offset:1,color:'#059669'}]) : i === 1 ? new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#3b82f6'},{offset:1,color:'#2563eb'}]) : new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#64748b'},{offset:1,color:'#475569'}]), borderRadius: [4,4,0,0] } })), barWidth: '35%', label: { show: true, position: 'top', color: '#e2e8f0', fontSize: 10, fontWeight: 'bold', formatter: '{c}%' } }]
+    backgroundColor: 'transparent',
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.95)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 10 }, formatter: p => `${p[0].name}<br/><b style="font-size:13px">${p[0].value}%</b>` },
+    grid: { left: '3%', right: '6%', top: '6%', bottom: '18%', containLabel: true },
+    xAxis: { type: 'category', data: jobs, axisLine: { lineStyle: { color: 'rgba(148,163,184,0.12)' } }, axisLabel: { color: '#94a3b8', fontSize: 8, rotate: 15 } },
+    yAxis: { type: 'value', max: 100, axisLine: { show: false }, axisTick: { show: false }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.06)' } }, axisLabel: { color: '#64748b', fontSize: 8, formatter: '{value}%' } },
+    series: [{ type: 'bar', barWidth: '40%', barGap: '30%', data: scores.map((v, i) => ({ value: v, itemStyle: { color: i === 0 ? new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#10b981'},{offset:1,color:'#059669'}]) : i === 1 ? new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#3b82f6'},{offset:1,color:'#2563eb'}]) : new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#64748b'},{offset:1,color:'#475569'}]), borderRadius: [4,4,0,0] } })), label: { show: true, position: 'top', color: '#e2e8f0', fontSize: 9, fontWeight: 'bold', formatter: '{c}%' } }]
   });
-  window.addEventListener('resize', () => chart.resize());
+  const onResize = () => { try { chart.resize({ width: dom.clientWidth || 380, height: 160 }); } catch(e){} };
+  window.addEventListener('resize', onResize);
+  chart._onResize = onResize;
 }
 
 // 接受复活
