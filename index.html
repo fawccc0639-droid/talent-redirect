@@ -322,6 +322,10 @@ tailwind.config = {
               <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">目标部门主管接收意愿</div>
               <div class="flex items-center gap-4"><div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-lg">👍</div><div><div class="text-sm font-semibold text-slate-800">PCG 社交平台 · 孙总监</div><div class="text-xs text-slate-500">数据驱动型PM正是团队缺口，"SQL+增长实验的组合很难得"</div></div><span class="ml-auto px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full border border-emerald-200">接收意愿 82%</span></div>
             </div>
+            <div class="flex items-center gap-3">
+              <button class="px-4 py-2 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">标记为常规淘汰</button>
+              <button onclick="generatePreview('cand-2')" id="btn-preview-cand-2" class="btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg">生成并预览复活赛邀请 →</button>
+            </div>
           </div>
 
           <!-- ── 王同学报告 ── -->
@@ -354,6 +358,10 @@ tailwind.config = {
             <div class="bg-white rounded-xl border border-slate-200 p-5 mb-4">
               <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">目标部门主管接收意愿</div>
               <div class="flex items-center gap-4"><div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-lg">🔥</div><div><div class="text-sm font-semibold text-slate-800">CSIG 设计中心 · 陈总监</div><div class="text-xs text-slate-500">"我们正在找会 Three.js 的3D数据可视化设计师，这就是我想要的！"</div></div><span class="ml-auto px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full border border-emerald-200">接收意愿 88%</span></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button class="px-4 py-2 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">标记为常规淘汰</button>
+              <button onclick="generatePreview('cand-3')" id="btn-preview-cand-3" class="btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg">生成并预览复活赛邀请 →</button>
             </div>
           </div>
         </div>
@@ -728,8 +736,81 @@ function generateRecommendation(candidate, matchResult) {
   return `经过 AI 人才路由引擎深度分析，虽然你在【${originDept}】的${originJob}面试中被淘汰，但我们发现你与【${newTitle}】岗位具有显著更高的匹配度（${matchResult.finalScore}%）。\n\n核心命中能力：${highlights.join('；')}。${crossHighlights.length > 0 ? '此外，你的跨界能力——' + crossHighlights.join('、') + '——也为该岗位带来了独特的竞争优势。' : ''}\n\n这不是你的失败，而是系统终于学会了在正确的坐标轴上衡量你的价值。我们诚挚邀请你接受这次智能重定向，开启逆风翻盘之旅。`;
 }
 
+// ===================== 李同学 & 王同学数据 =====================
+const liProfile = {
+  id: "CAND-2026-0058", status: "ELIMINATED",
+  basic: { name: "李同学", originRole: "产品经理", originDept: "PCG-社交平台产品部", eliminatedBy: "INTERVIEW_ROUND_2", eliminatedReason: "PRD需求文档能力未达产品岗门槛" },
+  hardSkills: [
+    { skill: "SQL / 数据查询",         score: 92, level: "EXPERT" },
+    { skill: "数据分析与 A/B 增长实验",  score: 88, level: "ADVANCED" },
+    { skill: "PRD/需求文档",           score: 72, level: "INTERMEDIATE" },
+    { skill: "跨部门沟通",              score: 76, level: "INTERMEDIATE" },
+    { skill: "用户调研",               score: 74, level: "INTERMEDIATE" },
+  ],
+  crossDomain: [
+    { skill: "数据分析与 A/B 增长实验", score: 88, level: "ADVANCED" },
+    { skill: "数据建模 / 统计",        score: 86, level: "ADVANCED" },
+    { skill: "社交/社区产品理解",       score: 84, level: "ADVANCED" },
+  ],
+  metaAbilities: { learningAgility: 84, structuredThinking: 88, cognitiveFlexibility: 78, collaboration: 80 },
+  education: { degree: "硕士", major: "信息管理与信息系统", minor: "" },
+  experience: { totalYears: 3, relevantSummary: "2年产品 + 1年数据分析师" },
+};
+
+const wangProfile = {
+  id: "CAND-2026-0071", status: "ELIMINATED",
+  basic: { name: "王同学", originRole: "UI 设计师", originDept: "PCG-平台前端组", eliminatedBy: "INTERVIEW_ROUND_3", eliminatedReason: "Figma/Sketch熟练度未达UI岗要求" },
+  hardSkills: [
+    { skill: "Three.js / WebGL",       score: 90, level: "EXPERT" },
+    { skill: "动效设计与交互",          score: 94, level: "EXPERT" },
+    { skill: "Figma / Sketch",         score: 68, level: "INTERMEDIATE" },
+    { skill: "UI设计规范",              score: 70, level: "INTERMEDIATE" },
+    { skill: "Canvas / 图形渲染",       score: 82, level: "ADVANCED" },
+  ],
+  crossDomain: [
+    { skill: "3D游戏引擎基础 (Unity/UE)", score: 78, level: "INTERMEDIATE" },
+    { skill: "可视化叙事 (Data Storytelling)", score: 86, level: "ADVANCED" },
+    { skill: "数据分析与 A/B 增长实验", score: 72, level: "INTERMEDIATE" },
+  ],
+  metaAbilities: { learningAgility: 86, structuredThinking: 80, cognitiveFlexibility: 85, collaboration: 78 },
+  education: { degree: "本科", major: "数字媒体艺术", minor: "计算机科学与技术（辅修）" },
+  experience: { totalYears: 3, relevantSummary: "2年UI + 1年3D动效设计" },
+};
+
+// 李同学匹配岗位池
+const liJobPool = [
+  { id: "JOB-2026-0105", title: "高级产品经理", department: "PCG-社交平台产品部", urgency: "HIGH",
+    requirementProfile: { mustHave: [
+      { skill: "PRD/需求文档", minScore: 82, weight: 0.40 }, { skill: "跨部门沟通", minScore: 80, weight: 0.25 },
+      { skill: "用户调研", minScore: 75, weight: 0.20 }, { skill: "数据分析与 A/B 增长实验", minScore: 60, weight: 0.15 },
+    ], niceToHave: [], crossDomainBonus: false, metaRequirement: { collaboration: 80 } },
+  },
+  { id: "JOB-2026-0208", title: "增长产品运营（社交方向）", department: "PCG-社交平台产品部", urgency: "MEDIUM",
+    requirementProfile: { mustHave: [
+      { skill: "数据分析与 A/B 增长实验", minScore: 80, weight: 0.35 }, { skill: "社交/社区产品理解", minScore: 75, weight: 0.25 },
+      { skill: "数据建模 / 统计", minScore: 70, weight: 0.20 }, { skill: "跨部门沟通", minScore: 70, weight: 0.20 },
+    ], niceToHave: [{ skill: "SQL / 数据查询", bonusWeight: 0.10 }], crossDomainBonus: true, metaRequirement: { structuredThinking: 80, learningAgility: 80 } },
+  },
+];
+
+// 王同学匹配岗位池
+const wangJobPool = [
+  { id: "JOB-2026-0109", title: "UI 设计师", department: "PCG-平台前端组", urgency: "HIGH",
+    requirementProfile: { mustHave: [
+      { skill: "Figma / Sketch", minScore: 75, weight: 0.40 }, { skill: "UI设计规范", minScore: 80, weight: 0.30 },
+      { skill: "动效设计与交互", minScore: 70, weight: 0.20 }, { skill: "Canvas / 图形渲染", minScore: 60, weight: 0.10 },
+    ], niceToHave: [], crossDomainBonus: false, metaRequirement: { collaboration: 75 } },
+  },
+  { id: "JOB-2026-0210", title: "3D数据可视化设计师", department: "CSIG-设计中心", urgency: "MEDIUM",
+    requirementProfile: { mustHave: [
+      { skill: "Three.js / WebGL", minScore: 85, weight: 0.35 }, { skill: "动效设计与交互", minScore: 80, weight: 0.25 },
+      { skill: "可视化叙事 (Data Storytelling)", minScore: 75, weight: 0.20 }, { skill: "Canvas / 图形渲染", minScore: 70, weight: 0.20 },
+    ], niceToHave: [{ skill: "3D游戏引擎基础 (Unity/UE)", bonusWeight: 0.10 }], crossDomainBonus: true, metaRequirement: { cognitiveFlexibility: 80 } },
+  },
+];
+
 // ===================== UI 交互 =====================
-let routeResult = null, activePreviewEl = null;
+let routeResult = null, activeCandidateId = 'cand-1';
 
 // Tab 切换
 function switchTab(tab) {
@@ -751,12 +832,17 @@ function selectCandidate(id) {
   const report = document.getElementById('report-' + id);
   if (card) card.classList.add('bg-brand-50/50','border-l-[3px]','border-l-brand-500');
   if (report) report.classList.remove('hidden');
-  // Reset preview
+  activeCandidateId = id;
+  // Reset preview for this candidate
   resetPreview();
-  // 若选张同学，渲染错位诊断柱
+  // 渲染对应候选人的错位诊断 + 计算路由
   if (id === 'cand-1') {
     routeResult = calculateRoute(candidateProfile, activeJobPool);
     renderMismatchBars(routeResult);
+  } else if (id === 'cand-2') {
+    routeResult = calculateRoute(liProfile, liJobPool);
+  } else if (id === 'cand-3') {
+    routeResult = calculateRoute(wangProfile, wangJobPool);
   }
 }
 
@@ -779,10 +865,17 @@ function renderMismatchBars(result) {
   </div>`;
 }
 
-// 生成预览（含 loading 状态 + 滚动隔离 + ECharts 安全销毁）
-function generatePreview() {
-  const btn = document.getElementById('btn-generate-preview');
+// 生成预览（支持多候选人）
+function generatePreview(candId) {
+  const id = candId || activeCandidateId || 'cand-1';
+  const btnPrefix = id === 'cand-1' ? 'btn-generate-preview' : ('btn-preview-' + id);
+  const btn = document.getElementById(btnPrefix);
   if (!btn || btn.disabled) return;
+
+  // 确保 routeResult 已计算
+  if (id === 'cand-1') routeResult = calculateRoute(candidateProfile, activeJobPool);
+  else if (id === 'cand-2') routeResult = calculateRoute(liProfile, liJobPool);
+  else routeResult = calculateRoute(wangProfile, wangJobPool);
 
   // ── 1. Loading 状态 ──
   btn.disabled = true;
@@ -807,19 +900,16 @@ function generatePreview() {
     </div>`;
   document.getElementById('preview-content').classList.add('hidden');
 
-  // ── 2. 销毁旧的 ECharts 实例（避免宽高冲突） ──
-  ['chart-radar','chart-bar'].forEach(id => {
-    const dom = document.getElementById(id);
+  // ── 2. 销毁旧的 ECharts 实例 ──
+  ['chart-radar','chart-bar'].forEach(chartId => {
+    const dom = document.getElementById(chartId);
     if (dom) { const instance = echarts.getInstanceByDom(dom); if (instance) instance.dispose(); dom.innerHTML = ''; }
   });
 
-  if (!routeResult) routeResult = calculateRoute(candidateProfile, activeJobPool);
-
-  // ── 3. 1秒后渲染内容 ──
+  // ── 3. 1秒后渲染 ──
   setTimeout(() => {
     const { candidate, best } = routeResult, job = best.job;
 
-    // 隐藏loading，显示内容
     document.getElementById('preview-empty').classList.add('hidden');
     const content = document.getElementById('preview-content');
     content.classList.remove('hidden');
@@ -830,11 +920,13 @@ function generatePreview() {
     sub.innerHTML = '';
     typewriterEffect(sub, `Hi ${candidate.basic.name}，关于你在【${candidate.basic.originDept}】的${candidate.basic.originRole}面试，AI 有不一样的发现...`, 35);
 
-    // 错位解析
-    const origin = routeResult.results.find(r => r.job.id === "JOB-2026-0101");
+    // 错位解析 — 取最低匹配度的岗位作为原岗
+    const sortedResults = [...routeResult.results].sort((a,b) => a.finalScore - b.finalScore);
+    const origin = sortedResults[0]; // 最低分 = 原岗位
     const misEl = document.getElementById('preview-mismatch');
+    const topCrossSkills = candidate.crossDomain.slice(0, 2).map(s => `${s.skill.replace(/\s*\(.*?\)/g,'')}(${s.score}分)`).join(' / ');
     misEl.innerHTML = (origin ? origin.mustHaveDetails.filter(d => !d.met).map(d => `<div class="py-0.5">• ${d.skill}：候选人 <span class="text-red-400">${d.candidateScore}</span> 分 < 要求 ≥ <span class="text-slate-300">${d.threshold}</span> 分 <span class="text-red-500/70 text-[9px]">(缺口 ${d.threshold-d.candidateScore})</span></div>`).join('') : '')
-      + `<div class="text-emerald-400 mt-1.5 leading-relaxed">💡 但你的 3D WebGL(95) / 游戏引擎(85) 等优势在此岗完全无法释放</div>`;
+      + `<div class="text-emerald-400 mt-1.5 leading-relaxed">💡 但你的 ${topCrossSkills} 等优势在此岗完全无法释放</div>`;
 
     // 新岗位
     document.getElementById('preview-job-title').textContent = job.title;
@@ -865,7 +957,6 @@ function generatePreview() {
 }
 
 function resetPreview() {
-  // 先销毁旧 ECharts
   ['chart-radar','chart-bar'].forEach(id => {
     const dom = document.getElementById(id);
     if (dom) { const instance = echarts.getInstanceByDom(dom); if (instance) instance.dispose(); dom.innerHTML = ''; }
@@ -880,8 +971,11 @@ function resetPreview() {
     <div class="text-sm text-slate-400 font-medium mb-1">等待生成预览</div>
     <div class="text-xs text-slate-600 leading-relaxed">HR 在左侧选中候选人并点击<br/>"生成并预览复活赛邀请"后<br/>此处将实时渲染候选人视角的<br/>逆风翻盘复活页面</div>
   </div>`;
-  const btn = document.getElementById('btn-generate-preview');
-  if (btn) { btn.disabled = false; btn.textContent = '生成并预览复活赛邀请 →'; btn.className = 'btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg'; }
+  // 重置所有三个候选人的按钮
+  ['btn-generate-preview', 'btn-preview-cand-2', 'btn-preview-cand-3'].forEach(btnId => {
+    const btn = document.getElementById(btnId);
+    if (btn) { btn.disabled = false; btn.textContent = '生成并预览复活赛邀请 →'; btn.className = 'btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg'; }
+  });
 }
 
 // 打字机
@@ -894,14 +988,13 @@ function typewriterEffect(el, text, speed) {
 // ECharts 雷达图（适配窄预览区：420px 宽 → 内宽 ~380px）
 function renderRadarChart(result) {
   const dom = document.getElementById('chart-radar'); if (!dom) return;
-  // 安全销毁
   const old = echarts.getInstanceByDom(dom); if (old) old.dispose();
   dom.innerHTML = '';
   const chart = echarts.init(dom, null, { width: dom.clientWidth || 380, height: 200 });
-  const allSkills = [...result.candidate.hardSkills.map(s => s.skill), ...result.candidate.crossDomain.map(s => s.skill)];
   const skillMap = buildSkillMap(result.candidate);
   const bestReq = result.best.job.requirementProfile.mustHave;
-  const originReq = (result.results.find(r => r.job.id === "JOB-2026-0101") || {}).requirementProfile?.mustHave || [];
+  const sorted = [...result.results].sort((a,b) => a.finalScore - b.finalScore);
+  const originReq = (sorted[0] || {}).job?.requirementProfile?.mustHave || [];
   // 窄容器取4项核心指标
   const keySkills = ['WebGL / Three.js','React / Vue','3D游戏引擎基础 (Unity/UE)','社交/社区产品理解'];
   const nameMap = { 'WebGL / Three.js':'WebGL/3D', 'React / Vue':'React/Vue', '3D游戏引擎基础 (Unity/UE)':'游戏引擎', '社交/社区产品理解':'社交/社区' };
