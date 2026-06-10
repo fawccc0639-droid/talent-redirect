@@ -211,6 +211,49 @@ tailwind.config = {
               <span class="text-[10px] text-slate-400">待处理</span>
             </div>
           </div>
+
+          <!-- ── 分割线：以下为不满足路由条件的案例 ── -->
+          <div class="px-4 py-2 bg-slate-50 border-y border-slate-200">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">▼ 未触发路由（不满足推送标准）</div>
+          </div>
+
+          <!-- 候选人 4: 赵同学 — 反例 — -->
+          <div id="cand-card-4" onclick="selectCandidate('cand-4')" class="cand-card px-4 py-3.5 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-all opacity-70">
+            <div class="flex items-start justify-between mb-1.5">
+              <div>
+                <div class="text-sm font-semibold text-slate-600">赵同学</div>
+                <div class="text-[11px] text-slate-400">原投递：前端开发</div>
+              </div>
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">B-</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-400 text-[9px] rounded">React 72</span>
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-400 text-[9px] rounded">TS 65</span>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="text-[10px] text-slate-400">● 第2轮淘汰</span>
+              <span class="text-[10px] text-slate-300">不满足路由条件</span>
+            </div>
+          </div>
+
+          <!-- 候选人 5: 周同学 — 反例 — -->
+          <div id="cand-card-5" onclick="selectCandidate('cand-5')" class="cand-card px-4 py-3.5 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-all opacity-70">
+            <div class="flex items-start justify-between mb-1.5">
+              <div>
+                <div class="text-sm font-semibold text-slate-600">周同学</div>
+                <div class="text-[11px] text-slate-400">原投递：后端开发</div>
+              </div>
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">B</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-400 text-[9px] rounded">Java 70</span>
+              <span class="px-1.5 py-0.5 bg-slate-100 text-slate-400 text-[9px] rounded">Spring 72</span>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="text-[10px] text-slate-400">● HR初筛淘汰</span>
+              <span class="text-[10px] text-slate-300">不满足路由条件</span>
+            </div>
+          </div>
         </div>
 
         <!-- 中栏：AI 深度错位报告 | flex-1 -->
@@ -364,6 +407,52 @@ tailwind.config = {
               <button onclick="generatePreview('cand-3')" id="btn-preview-cand-3" class="btn-glow px-5 py-2 text-xs font-semibold text-white rounded-lg">生成并预览复活赛邀请 →</button>
             </div>
           </div>
+
+          <!-- ── 赵同学报告（反例：评分不足，无跨界）── -->
+          <div id="report-cand-4" class="report-panel hidden">
+            <div class="bg-white rounded-xl border border-slate-200 p-5 mb-4 opacity-80">
+              <div class="flex items-center justify-between mb-4"><div><div class="text-lg font-bold text-slate-500">赵同学</div><div class="text-sm text-slate-400">技术研发中心 · 前端开发 · 第2轮淘汰</div></div><span class="px-2.5 py-1 bg-slate-100 text-slate-500 text-xs font-bold rounded-lg">AI 评分 B- (Bottom 60%)</span></div>
+              <div class="grid grid-cols-4 gap-3 mb-4">
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">React</div><div class="text-lg font-bold text-slate-400">72</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">TS</div><div class="text-lg font-bold text-slate-400">65</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">算法</div><div class="text-lg font-bold text-slate-400">58</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">工程化</div><div class="text-lg font-bold text-slate-400">60</div></div>
+              </div>
+            </div>
+            <div class="bg-red-50 border border-red-100 rounded-xl p-5">
+              <div class="text-sm font-semibold text-red-700 mb-3">❌ 不满足路由推送标准</div>
+              <div class="space-y-1.5 text-xs text-red-600">
+                <div>✗ <b>标准1</b>：AI评分 B- 未达 A- 门槛（Top 20%）</div>
+                <div>✗ <b>标准3</b>：无跨界能力，全部技能均为常规前端</div>
+                <div>✗ <b>标准4</b>：岗位池最高匹配仅 52%，无合适去向</div>
+                <div class="mt-2 pt-2 border-t border-red-100 text-red-500 font-medium">→ 建议：常规淘汰，入人才库留档</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 周同学报告（反例：有跨界但无高匹配岗位）── -->
+          <div id="report-cand-5" class="report-panel hidden">
+            <div class="bg-white rounded-xl border border-slate-200 p-5 mb-4 opacity-80">
+              <div class="flex items-center justify-between mb-4"><div><div class="text-lg font-bold text-slate-500">周同学</div><div class="text-sm text-slate-400">CSIG-云架构部 · 后端开发 · HR初筛淘汰</div></div><span class="px-2.5 py-1 bg-slate-100 text-slate-500 text-xs font-bold rounded-lg">AI 评分 B (Top 45%)</span></div>
+              <div class="grid grid-cols-4 gap-3 mb-4">
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">Java</div><div class="text-lg font-bold text-slate-400">70</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center opacity-50"><div class="text-[10px] text-slate-400 mb-1">Spring</div><div class="text-lg font-bold text-slate-400">72</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-[10px] text-slate-400 mb-1">MySQL</div><div class="text-lg font-bold text-brand-600">80</div></div>
+                <div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-[10px] text-slate-400 mb-1">运维</div><div class="text-lg font-bold text-brand-600">78</div></div>
+              </div>
+            </div>
+            <div class="bg-amber-50 border border-amber-100 rounded-xl p-5">
+              <div class="text-sm font-semibold text-amber-700 mb-3">⚠️ 部分满足但不完全达标</div>
+              <div class="space-y-1.5 text-xs text-amber-700">
+                <div>✓ <b>标准3</b>：具备运维/数据库等跨界能力</div>
+                <div>✗ <b>标准1</b>：AI评分 B 未达 A- 门槛</div>
+                <div>✗ <b>标准4</b>：在招岗多为 Go/云原生，最高匹配 64%</div>
+                <div>✗ <b>标准5</b>：匹配岗位主管无接收意愿</div>
+                <div class="mt-2 pt-2 border-t border-amber-100 text-amber-600 font-medium">→ 建议：常规淘汰，入人才库。若有 Java 新岗可重新激活</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- 右栏：C端预览区 | w-[420px] -->
