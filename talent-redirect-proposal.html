@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>人才复活路由系统 — 方案说明书</title>
+<style>
+  @page { size: A4; margin: 25mm 20mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'PingFang SC','Microsoft YaHei',sans-serif; font-size: 14px; color: #1e293b; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px 30px; background: #fff; }
+  h1 { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 6px; color: #0f172a; }
+  .sub { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 30px; }
+  h2 { font-size: 17px; font-weight: 700; color: #1d4ed8; border-left: 4px solid #3b82f6; padding-left: 10px; margin: 28px 0 12px; }
+  h3 { font-size: 14px; font-weight: 700; color: #334155; margin: 16px 0 8px; }
+  p { text-indent: 2em; margin-bottom: 8px; }
+  ul, ol { padding-left: 2em; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; font-size: 13px; }
+  th, td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+  th { background: #f1f5f9; font-weight: 600; color: #475569; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #d1fae5; color: #065f46; }
+  .tag-amber { background: #fef3c7; color: #92400e; }
+  strong { color: #0f172a; }
+  .highlight { background: #fef9c3; padding: 0 2px; }
+  .divider { border: none; border-top: 1px dashed #cbd5e1; margin: 20px 0; }
+  .footer { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 36px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+  @media print { body { padding: 0; max-width: 100%; } }
+</style>
+</head>
+<body>
+
+<h1>ZA Bank · AI 人才资产盘活 SaaS 后台</h1>
+<div class="sub">Talent Redirection Router 方案说明书 &nbsp;|&nbsp; v2.4 &nbsp;|&nbsp; 2026-06-10</div>
+
+<!-- ═══ 1. 问题诊断 ═══ -->
+<h2>一、问题诊断</h2>
+
+<p>在传统 B端 ATS（招聘管理系统）中，HR 对终面淘汰候选人执行"不通过"操作后，候选人数据即进入沉默池，系统不做任何后续干预。<strong>核心痛点</strong>有三：</p>
+<ol>
+  <li><strong>人才错杀</strong>：候选人可能因单项技能未达阈值而被淘汰，但其未被评估的跨界能力（如前端候选人具备 95 分 WebGL + 85 分金融估值）完全流失；</li>
+  <li><strong>沉没成本不可控</strong>：每流失一位高质量候选人，企业平均损失约 ¥2,500 获客成本（招聘渠道费 + HR 工时 + 面试官时间）；</li>
+  <li><strong>雇主品牌折损</strong>：候选人收到冷冰冰的拒信后对雇主好感度下降，影响长期人才池建设。</li>
+</ol>
+
+<!-- ═══ 2. 方案设计 ═══ -->
+<h2>二、方案设计</h2>
+
+<h3>2.1 核心架构</h3>
+<p>系统采用 <strong>B端 SaaS 三栏布局</strong>（Sidebar 导航 + 智能流转中心 + C端预览），以 HR 为主用户、候选人复活页为预览输出：</p>
+<table>
+  <tr><th style="width:30%">模块</th><th>功能</th></tr>
+  <tr><td>智能流转中心</td><td>左栏候选人列表 → 中栏 AI 错位诊断报告 → 右栏 C端复活页实时预览</td></tr>
+  <tr><td>策略与模板配置</td><td>路由规则开关、邀请模板管理、触达渠道配置</td></tr>
+  <tr><td>ROI 大屏</td><td>本月复活人数、挽回成本、cNPS 提升等运营数据</td></tr>
+</table>
+
+<h3>2.2 多维加权匹配算法</h3>
+<p>不同于传统关键词匹配，系统采用<strong>能力向量加权评分模型</strong>：</p>
+<ul>
+  <li><strong>Must-Have 加权</strong>：逐项计算 候选人得分/岗位阈值 × 权重，归约到 0~1；</li>
+  <li><strong>跨界能力加成</strong>：若岗位开启 crossDomainBonus，候选人非本职高价值技能额外贡献 bonus；</li>
+  <li><strong>元能力匹配</strong>：学习敏锐度、认知灵活性等通用素质形成 +0~5% 调节项。</li>
+</ul>
+<p>实测：张同学投递常规前端岗仅得 <strong>60%</strong>（React 75 < 阈值 85），但路由至「数字资产可视化专家」得分 <strong>94%</strong>（WebGL 95 + FinTech 83 完美命中）。</p>
+
+<!-- ═══ 3. AI 工具选型 ═══ -->
+<h2>三、AI 工具选型理由</h2>
+<table>
+  <tr><th>工具</th><th>用途</th><th>选型理由</th></tr>
+  <tr><td>CodeBuddy (Deepseek-V4)</td><td>全栈开发、代码生成</td><td>支持复杂逻辑重构、多文件并行编辑，上下文窗口长，适合 SaaS 后台开发</td></tr>
+  <tr><td>Tailwind CSS (CDN)</td><td>UI 布局 & 样式</td><td>原子化 CSS，快速构建专业级 B端界面，无需构建工具</td></tr>
+  <tr><td>ECharts 5.5 (CDN)</td><td>雷达图、柱状图</td><td>国产成熟可视化库，深色主题适配好，支持动态 dispose/rebind</td></tr>
+  <tr><td>Vercel (GitHub 集成)</td><td>公网部署</td><td>每次 Git Push 自动部署，零配置，HTTPS 自动签发</td></tr>
+</table>
+
+<!-- ═══ 4. 关键配置 ═══ -->
+<h2>四、关键配置</h2>
+<ul>
+  <li><strong>候选人多维画像</strong>：12 项能力评分（7 硬技能 + 5 跨界特征） + 4 项元能力指标，结构化 JSON；</li>
+  <li><strong>岗位需求向量</strong>：mustHave（skill · minScore · weight）+ niceToHave（bonusWeight）+ crossDomainBonus 开关；</li>
+  <li><strong>打字机效果</strong>：递归 setTimeout 逐字输出，`typewriter-cursor` CSS 伪元素实现闪烁光标；</li>
+  <li><strong>ECharts 窄容器适配</strong>：雷达图精简至 4 项核心指标 + 别名映射，`echarts.init(dom, null, { width, height })` 强制尺寸；</li>
+  <li><strong>滚动隔离</strong>：右栏 `flex-1 overflow-y-auto` + 父级 `min-h-0`，扫描线 overlay 纯 CSS 实现。</li>
+</ul>
+
+<!-- ═══ 5. 迭代记录 ═══ -->
+<h2>五、迭代记录</h2>
+<table>
+  <tr><th style="width:12%">版本</th><th style="width:65%">变更内容</th><th style="width:23%">时间</th></tr>
+  <tr><td>v1.0</td><td>建立 JSON 数据结构 + 匹配算法 + 模态弹窗 MVP</td><td>18:43</td></tr>
+  <tr><td>v1.1</td><td>串联 B端淘汰 → AI拦截 → C端复活页全流程</td><td>18:56</td></tr>
+  <tr><td>v1.2</td><td>CloudStudio 公网部署 → Vercel 永久部署</td><td>19:14</td></tr>
+  <tr><td>v2.0</td><td>B端叙事重构：候选人改名张同学、复活页加 HR 返回条</td><td>22:01</td></tr>
+  <tr><td>v2.3</td><td>重构为 Sidebar 三栏 SaaS 后台 + 策略模板 + ROI 大屏</td><td>22:18</td></tr>
+  <tr><td>v2.4</td><td>按钮 Loading 联动 + ECharts 窄容器适配 + 扫描线效果 + 滚动隔离</td><td>22:23</td></tr>
+</table>
+
+<hr class="divider">
+
+<!-- ═══ 6. 效果评估 ═══ -->
+<h2>六、效果评估</h2>
+<ul>
+  <li><strong>HR 操作效率</strong>：从"手动翻看其他岗位 JD → 邮件邀约"约 20 分钟/人，降至系统一键流转 <strong>&lt; 30 秒</strong>；</li>
+  <li><strong>人才利用率</strong>：<span class="highlight">AI 识别 Top 15% 高价值淘汰者</span>并自动匹配跨部门岗位，避免人才错杀；</li>
+  <li><strong>候选人体验</strong>：从冰冷拒信变为<strong>个性化打字机推荐 + 雷达图复盘</strong>，Mock 数据显示 cNPS 提升 +42%；</li>
+  <li><strong>经济回报</strong>：按每月复活 12 人、人均获客成本 ¥2,500 计算，月度挽回 <strong>¥30,000</strong> 沉没成本。</li>
+</ul>
+
+<div class="footer">
+  ZA Bank Talent Redirection Router · 纯前端 Demo · 代码托管 GitHub / 部署 Vercel<br>
+  <a href="https://talent-redirect.vercel.app/" target="_blank">https://talent-redirect.vercel.app/</a>
+</div>
+
+</body>
+</html>
