@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>腾讯 · AI 人才资产盘活 SaaS 后台</title>
+<title>腾讯 HR · AI 人才智能路由插件</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script>
@@ -77,7 +77,7 @@ tailwind.config = {
       <div class="w-8 h-8 bg-gradient-to-br from-brand-500 to-emerald-400 rounded-lg flex items-center justify-center text-white font-bold text-[10px]">TX</div>
       <div>
         <div class="text-sm font-semibold text-white leading-tight">Talent Router</div>
-        <div class="text-[10px] text-slate-500">AI 人才资产盘活平台</div>
+        <div class="text-[10px] text-slate-500">AI 插件 · 人才智能路由</div>
       </div>
     </div>
   </div>
@@ -133,7 +133,7 @@ tailwind.config = {
     <div class="flex items-center gap-4">
       <span class="text-xs text-slate-500">2026-06-10 · 周三 18:43</span>
       <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-medium rounded-full border border-emerald-200">
-        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>引擎运行中
+        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>AI 插件运行中
       </span>
     </div>
   </header>
@@ -1153,7 +1153,7 @@ function acceptRevival() {
 (function init() {
   routeResult = calculateRoute(candidateProfile, activeJobPool);
   renderMismatchBars(routeResult);
-  console.log("[TRR] ✓ B端 SaaS 后台已就绪 | 当前标签: 智能流转中心");
+  console.log("[TRR] ✓ AI 人才路由插件已就绪 | 当前标签: 智能流转中心");
   console.log("[TRR] 候选人:", candidateProfile.basic.name, `(${candidateProfile.basic.originRole})`);
 })();
 </script>
